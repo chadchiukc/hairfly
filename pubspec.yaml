@@ -1,0 +1,53 @@
+name: hairfly
+description: A booking app for salon.
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0-87.0.dev <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  firebase_core:
+  get:
+  firebase_auth:
+  cloud_firestore:
+  flutter_easyloading:
+  geolocator:
+  firebase_storage:
+  ntp:
+  responsive_builder:
+  url_strategy:
+  get_storage:
+  table_calendar:
+  carousel_slider: ^4.0.0
+  convex_bottom_bar: ^3.0.0
+  flutter_map: ^0.14.0
+  cached_network_image: ^3.2.0
+  latlong2: ^0.8.1
+  maps_launcher: ^2.0.1
+  flutter_rating_bar: ^4.0.0
+  flutter_switch: ^0.3.2
+  toggle_switch: ^1.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
