@@ -1,4 +1,4 @@
 # hairfly
 ---
-This is a demo booking app for demostratre my skills on Flutter.\
-This app is designed for public to make a appointment on barber or salon.\
+This is a demo booking app for web/android/ios by Flutter.
+It is designed for customers to make a appointment on barber or salon.
