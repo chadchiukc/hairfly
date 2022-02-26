@@ -6,6 +6,7 @@ import 'package:hairfly/controllers/carousel.dart';
 import 'package:hairfly/controllers/locale.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/pages/profile.dart';
+import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/pages/home/map.dart';
 import 'package:hairfly/utils/constant.dart';
@@ -329,7 +330,10 @@ class HomePage extends StatelessWidget {
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.toNamed(
+                                        '${Routes.booking}/${_shop.id}');
+                                  },
                                   child: Text(
                                     'detail'.tr,
                                     style: const TextStyle(fontSize: 12),

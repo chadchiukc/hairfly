@@ -13,10 +13,12 @@ class AuthMiddleware extends GetMiddleware {
 
   @override
   RouteSettings? redirect(String? route) {
+    String returnUrl = Uri.encodeFull(route ?? '');
+    print(returnUrl);
     return _authController.user != null
         ? null
         : _authController.isReady.value
-            ? const RouteSettings(name: Routes.login)
+            ? RouteSettings(name: '${Routes.login}?return=' + returnUrl)
             : const RouteSettings(name: Routes.home);
   }
 }

@@ -16,6 +16,7 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _forgot = TextEditingController();
   final AuthController _authController = Get.find();
+  String returnUrl = Get.parameters['return'] ?? '/';
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +172,7 @@ class LoginPage extends StatelessWidget {
                                       if (_formKey.currentState!.validate()) {
                                         if (await _authController.login(
                                             _email.text, _pass.text)) {
-                                          Get.offAndToNamed(Routes.signup);
+                                          Get.offAndToNamed(returnUrl);
                                         }
                                       }
                                     },
@@ -182,7 +183,8 @@ class LoginPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Get.offAndToNamed(Routes.signup);
+                                    Get.offAndToNamed(
+                                        '${Routes.signup}?return=' + returnUrl);
                                   },
                                   child: Text(
                                     'createAccount'.tr,

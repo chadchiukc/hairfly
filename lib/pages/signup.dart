@@ -20,6 +20,7 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController _phone = TextEditingController();
   final AuthController _authController = Get.find();
   final CarouselCtrl _carouselCtrl = Get.find();
+  String returnUrl = Get.parameters['return'] ?? '/';
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +167,9 @@ class SignUpPage extends StatelessWidget {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Get.offAndToNamed(Routes.login);
+                                      Get.offAndToNamed(
+                                          '${Routes.login}?return=' +
+                                              returnUrl);
                                     },
                                     child: Text(
                                       'signInHere'.tr,

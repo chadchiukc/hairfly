@@ -4,6 +4,7 @@ import 'package:hairfly/controllers/map.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/utils/cached_tile_provider.dart';
 import 'package:hairfly/utils/constant.dart';
+import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/utils/zoom_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -168,7 +169,10 @@ class MapPage extends StatelessWidget {
                                                     kCenter, kZoom.toDouble()));
                                           }),
                                       TextButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Get.toNamed(
+                                                '${Routes.booking}/${_shop.id}');
+                                          },
                                           child: Text('detail'.tr)),
                                     ],
                                   ),

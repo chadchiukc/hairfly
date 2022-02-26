@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -126,23 +124,17 @@ class BookingPage extends StatelessWidget {
                                                                   myShopListTile(
                                                                       Icons
                                                                           .home,
-                                                                      GestureDetector(
-                                                                          onTap: () =>
-                                                                              {
-                                                                                MapsLauncher.launchCoordinates(_shopCtrl.selectedShop.value!.latLon!.latitude, _shopCtrl.selectedShop.value!.latLon!.longitude)
-                                                                              },
-                                                                          child:
-                                                                              Text(
-                                                                            _localeCtrl.localeIdx == 0
-                                                                                ? _shopCtrl.selectedShop.value!.address!
-                                                                                : _shopCtrl.selectedShop.value!.addressZh!,
-                                                                            maxLines:
-                                                                                3,
-                                                                            style: const TextStyle(
-                                                                                overflow: TextOverflow.clip,
-                                                                                fontSize: 14,
-                                                                                decoration: TextDecoration.underline),
-                                                                          )),
+                                                                      Flexible(
+                                                                        child: GestureDetector(
+                                                                            onTap: () => {
+                                                                                  MapsLauncher.launchCoordinates(_shopCtrl.selectedShop.value!.latLon!.latitude, _shopCtrl.selectedShop.value!.latLon!.longitude)
+                                                                                },
+                                                                            child: Text(
+                                                                              _localeCtrl.localeIdx == 0 ? _shopCtrl.selectedShop.value!.address! : _shopCtrl.selectedShop.value!.addressZh!,
+                                                                              maxLines: 3,
+                                                                              style: const TextStyle(overflow: TextOverflow.clip, fontSize: 14, decoration: TextDecoration.underline),
+                                                                            )),
+                                                                      ),
                                                                       enlargeIcon:
                                                                           true),
                                                                   myShopListTile(
@@ -243,7 +235,7 @@ class BookingPage extends StatelessWidget {
                               delegate: SliverChildBuilderDelegate((_, idx) {
                             return Container(
                               // color: const Color.fromARGB(255, 244, 190, 104),
-                              color: Color.fromARGB(255, 246, 243, 215),
+                              color: const Color.fromARGB(255, 246, 243, 215),
                               child: Column(children: [
                                 Center(
                                     child: Text(
@@ -304,7 +296,10 @@ class BookingPage extends StatelessWidget {
                                             ],
                                           ),
                                         ))
-                                    .toList()
+                                    .toList(),
+                                SizedBox(
+                                  height: 30,
+                                )
                               ]),
                             );
                           }, childCount: 1))

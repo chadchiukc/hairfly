@@ -104,8 +104,9 @@ class ShopCtrl extends GetxController {
 
   void selectServicesToList(String? shopId) {
     selectedShop.value = null;
-    selectedShopServices.clear();
+    // selectedShopServices.clear();
     if (shopId != null) {
+      selectedShopServices.clear();
       selectedShop = shopList.firstWhereOrNull((shop) => shop.id == shopId).obs;
       if (selectedShop.value?.services != null) {
         selectedShop.value?.services!.forEach((key, value) {

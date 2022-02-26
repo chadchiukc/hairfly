@@ -32,7 +32,7 @@ routes() => [
         middlewares: [AuthMiddleware()],
       ),
       GetPage(
-        name: Routes.booking,
+        name: '${Routes.booking}/:id',
         page: () => BookingPage(),
         transition: Transition.fade,
       ),
@@ -43,5 +43,5 @@ class Routes {
   static const login = '/login';
   static const signup = '/signup';
   static const profile = '/profile';
-  static const booking = '/booking/:id';
+  static const booking = '/booking';
 }
