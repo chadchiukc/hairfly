@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hairfly/utils/constant.dart';
-import 'package:hairfly/widgets/heading.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final double logoRadius;
   final Widget? widget;
   final ImageProvider? imageProvider;
+  final bool editable;
+  final bool backwardable;
+  final Function()? editCallback;
+  final bool borderRadius;
 
   MySliverAppBar(
       {required this.expandedHeight,
       this.widget,
       this.imageProvider,
-      this.logoRadius = 130});
+      this.logoRadius = 130,
+      this.editable = false,
+      this.backwardable = false,
+      this.borderRadius = true,
+      this.editCallback});
 
   @override
   double get maxExtent => expandedHeight;
@@ -31,10 +39,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              bottomRight: Radius.circular(25),
-              bottomLeft: Radius.circular(25),
-            ),
+            borderRadius: borderRadius
+                ? const BorderRadius.only(
+                    bottomRight: Radius.circular(25),
+                    bottomLeft: Radius.circular(25),
+                  )
+                : null,
             gradient: LinearGradient(
               colors: [
                 kAppBarColor.withOpacity(0),
@@ -64,6 +74,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 radius: logoRadius,
                 backgroundColor: kLogoBorderColor,
                 child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
                   radius: logoRadius - 10,
                   backgroundImage: imageProvider ??
                       const AssetImage('assets/images/logo.png'),
@@ -72,6 +83,44 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
         ),
+        !editable
+            ? const SizedBox.shrink()
+            : Positioned(
+                right: context.width / 2 - logoRadius + 30,
+                top: expandedHeight - logoRadius + 10 - shrinkOffset,
+                child: GestureDetector(
+                  onTap: editCallback,
+                  child: AnimatedOpacity(
+                    opacity: shrinkOffset > 30 ? 0 : 1,
+                    duration: const Duration(milliseconds: 300),
+                    child: const CircleAvatar(
+                        backgroundColor: Color.fromARGB(255, 222, 139, 166),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        )),
+                  ),
+                )),
+        !backwardable
+            ? const SizedBox.shrink()
+            : Positioned(
+                top: expandedHeight - 90 - shrinkOffset,
+                left: 20,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.offNamed(Get.previousRoute);
+                  },
+                  child: AnimatedOpacity(
+                    opacity: shrinkOffset > 30 ? 0 : 1,
+                    duration: const Duration(milliseconds: 300),
+                    child: const CircleAvatar(
+                        backgroundColor: Color.fromARGB(255, 224, 159, 181),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_sharp,
+                          color: Colors.white,
+                        )),
+                  ),
+                )),
       ],
     );
   }

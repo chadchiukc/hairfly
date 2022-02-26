@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:hairfly/models/service.dart';
 import 'package:hairfly/models/shop.dart';
 import 'package:hairfly/utils/database.dart';
 
 class ShopCtrl extends GetxController {
   var shopList = <ShopModel>[].obs;
   var filteredShopList = <ShopModel>[].obs;
-  var selectedShop = ShopModel().obs;
+  Rx<ShopModel?> selectedShop = null.obs;
   var selectedShopIndex = (-1).obs; //for selection on the map
   var isFetch = false.obs;
+  RxList<ServiceModel> selectedShopServices = <ServiceModel>[].obs;
 
   @override
   void onInit() async {
@@ -84,4 +86,40 @@ class ShopCtrl extends GetxController {
   int shopReviwer(List<dynamic>? list) {
     return list?.length ?? 0;
   }
+
+  String toNumOfReviewString(int num, String singleTr, String pluralTr) {
+    return '($num' ' ' + singleTr.trPlural(pluralTr, num) + ')';
+  }
+
+  List<ServiceModel> convertServicesToList(Map? services) {
+    if (services == null) {
+      return [];
+    }
+    List<ServiceModel> serviceList = [];
+    services.forEach((key, value) {
+      serviceList.add(ServiceModel(key, value));
+    });
+    return serviceList;
+  }
+
+  void selectServicesToList(String? shopId) {
+    selectedShop.value = null;
+    selectedShopServices.clear();
+    if (shopId != null) {
+      selectedShop = shopList.firstWhereOrNull((shop) => shop.id == shopId).obs;
+      if (selectedShop.value?.services != null) {
+        selectedShop.value?.services!.forEach((key, value) {
+          selectedShopServices.add(ServiceModel(key, value));
+        });
+      }
+    }
+  }
+  // void selectServicesToList(Map? services) {
+  //   selectedShopServices.clear();
+  //   if (services != null) {
+  //     services.forEach((key, value) {
+  //       selectedShopServices.add(ServiceModel(key, value));
+  //     });
+  //   }
+  // }
 }

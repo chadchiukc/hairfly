@@ -5,24 +5,26 @@ class UserModel {
   String? name;
   String? email;
   int? phone;
-  String? description;
   String? privilege;
+  String? gender;
 
-  UserModel(
-      {this.id,
-      this.name,
-      this.email,
-      this.phone,
-      this.privilege,
-      this.description});
+  UserModel({
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.privilege,
+    this.gender,
+  });
 
   factory UserModel.fromSnapshot(DocumentSnapshot documentSnapshot) {
     return UserModel(
-        id: documentSnapshot.id,
-        name: documentSnapshot['name'],
-        email: documentSnapshot['email'],
-        phone: documentSnapshot['phone'],
-        description: documentSnapshot['description'],
-        privilege: documentSnapshot['privilege']);
+      id: documentSnapshot.id,
+      name: documentSnapshot['name'],
+      email: documentSnapshot['email'],
+      phone: documentSnapshot['phone'],
+      privilege: documentSnapshot['privilege'],
+      gender: documentSnapshot['gender'],
+    );
   }
 }

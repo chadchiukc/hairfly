@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hairfly/models/carousel.dart';
+import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/utils/database.dart';
 
 class CarouselCtrl extends GetxController {
@@ -24,12 +25,18 @@ class CarouselCtrl extends GetxController {
       gender.value = 1;
     }
     await queryCarousel();
-    filterImgList = imgList
-        .where((img) => img.gender == _convertIndexToGender(gender.value))
-        .toList()
-        .obs;
+    updateFilterList(kNmOfImageDisplayedInCarousel);
     isFetched.value = true;
     super.onInit();
+  }
+
+  void updateFilterList(int numOfImg) {
+    filterImgList = imgList
+        .where((img) => img.gender == convertIndexToStr(gender.value))
+        .toList()
+        .obs;
+    filterImgList.shuffle();
+    filterImgList = filterImgList.take(numOfImg).toList().obs;
   }
 
   Future<void> queryCarousel() async {
@@ -49,14 +56,11 @@ class CarouselCtrl extends GetxController {
       gender.value = newGenderIndex;
       box.write('gender', newGenderIndex);
       filterImgList.clear();
-      filterImgList = imgList
-          .where((img) => img.gender == _convertIndexToGender(gender.value))
-          .toList()
-          .obs;
+      updateFilterList(kNmOfImageDisplayedInCarousel);
     }
   }
 
-  String _convertIndexToGender(int gender) {
+  String convertIndexToStr(int gender) {
     // 0 for male, 1 for female
     return gender == 0 ? 'm' : 'f';
   }

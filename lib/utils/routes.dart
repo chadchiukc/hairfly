@@ -1,25 +1,47 @@
 import 'package:get/get.dart';
+import 'package:hairfly/pages/booking.dart';
 import 'package:hairfly/pages/home.dart';
 import 'package:hairfly/pages/login.dart';
+import 'package:hairfly/pages/profile.dart';
 import 'package:hairfly/pages/signup.dart';
-// import 'package:hairfly/utils/auth_middleware.dart';
+import 'package:hairfly/utils/middleware.dart';
 
 routes() => [
       GetPage(
-        name: '/',
+        name: Routes.home,
         page: () => HomePage(),
-        // middlewares: [AuthMiddleware()],
+        transition: Transition.fade,
+        // middlewares: [allMiddleware()],
       ),
       GetPage(
-        name: '/login',
+        name: Routes.login,
         page: () => LoginPage(),
-        transition: Transition.fadeIn,
-        // middlewares: [AuthMiddleware()],
+        transition: Transition.fade,
+        middlewares: [LoginMiddleware()],
       ),
       GetPage(
-        name: '/signup',
+        name: Routes.signup,
         page: () => SignUpPage(),
         transition: Transition.fade,
-        // middlewares: [AuthMiddleware()],
+        middlewares: [LoginMiddleware()],
+      ),
+      GetPage(
+        name: Routes.profile,
+        page: () => ProfilePage(),
+        transition: Transition.fade,
+        middlewares: [AuthMiddleware()],
+      ),
+      GetPage(
+        name: Routes.booking,
+        page: () => BookingPage(),
+        transition: Transition.fade,
       ),
     ];
+
+class Routes {
+  static const home = '/';
+  static const login = '/login';
+  static const signup = '/signup';
+  static const profile = '/profile';
+  static const booking = '/booking/:id';
+}

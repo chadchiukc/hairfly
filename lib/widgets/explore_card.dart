@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class MyCard extends StatelessWidget {
+class ExploreCard extends StatelessWidget {
   final double imageRatio;
   final String text;
   final String imagePath;
 
-  const MyCard(
+  const ExploreCard(
     this.text,
     this.imagePath, {
     Key? key,
@@ -29,8 +29,10 @@ class MyCard extends StatelessWidget {
             children: [
               Text(
                 text,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                style: const TextStyle(
+                    color: Color.fromARGB(255, 98, 94, 94),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
               ),
               Positioned(
                 bottom: 0,

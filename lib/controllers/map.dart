@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapCtrl extends GetxController with GetTickerProviderStateMixin {
-  late final MapController mapController;
+  MapController mapController = MapController();
 
   @override
   void onInit() {
-    mapController = MapController();
+    // mapController = MapController();
     super.onInit();
   }
 

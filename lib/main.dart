@@ -9,12 +9,10 @@ import 'package:hairfly/controllers/carousel.dart';
 import 'package:hairfly/controllers/locale.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/firebase_options.dart';
+import 'package:hairfly/pages/booking.dart';
 import 'package:hairfly/pages/home.dart';
-import 'package:hairfly/pages/rating.dart';
-import 'package:hairfly/pages/profile.dart';
-import 'package:hairfly/pages/test.dart';
+import 'package:hairfly/pages/test2.dart';
 import 'package:hairfly/utils/constant.dart';
-import 'package:hairfly/utils/root.dart';
 import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/utils/translation.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -24,16 +22,17 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
   setPathUrlStrategy();
-  Get.put(AuthController());
-  Get.put(NavCtrl());
-  Get.put(ShopCtrl());
   Get.put(CarouselCtrl());
   Get.put(LocaleCtrl());
-  runApp(const MyApp());
+  Get.put(NavCtrl());
+  Get.put(AuthController());
+  Get.put(ShopCtrl());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+  final NavCtrl _navCtrl = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +49,7 @@ class MyApp extends StatelessWidget {
       builder: EasyLoading.init(),
       home: HomePage(),
       getPages: routes(),
+      routingCallback: (routing) => _navCtrl.routingCallback(routing),
     );
   }
 }

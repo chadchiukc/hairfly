@@ -5,6 +5,7 @@ import 'package:hairfly/controllers/carousel.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/widgets/image_network.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class MyCarousel extends StatelessWidget {
   MyCarousel({Key? key}) : super(key: key);
@@ -16,7 +17,11 @@ class MyCarousel extends StatelessWidget {
     return Obx(() => Column(children: [
           SizedBox(
             width: context.width,
-            height: Get.height * 0.3,
+            height: getValueForScreenType(
+                context: context,
+                mobile: Get.height * 0.3,
+                tablet: Get.height * 0.4,
+                desktop: Get.height * 0.4),
             child: !_carouselCtrl.isFetched.value
                 ? const SizedBox.shrink()
                 : CarouselSlider(
@@ -28,8 +33,16 @@ class MyCarousel extends StatelessWidget {
                               fit: StackFit.passthrough,
                               children: [
                                 SizedBox(
-                                    width: 300,
-                                    height: 300,
+                                    width: getValueForScreenType(
+                                        context: context,
+                                        mobile: 300,
+                                        tablet: 500,
+                                        desktop: 500),
+                                    height: getValueForScreenType(
+                                        context: context,
+                                        mobile: 300,
+                                        tablet: 500,
+                                        desktop: 500),
                                     child: myImage(item.datetime!, 'gallery',
                                         isJpg: true)),
                                 Positioned(

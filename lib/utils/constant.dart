@@ -15,3 +15,7 @@ const int kMaxZoom = 22;
 const kShopNameInMap = TextStyle(
     fontWeight: FontWeight.bold, fontSize: 15, fontStyle: FontStyle.italic);
 const kLatOffset = 0.005;
+const int kNmOfImageDisplayedInCarousel = 10;
+const kLoginHeader = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+enum UpdateKey { name, gender, phone }
+const kLoginContent = TextStyle(fontSize: 20);

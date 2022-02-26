@@ -9,10 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/widgets/image_network.dart';
-import 'package:hairfly/widgets/map_list_tile.dart';
+import 'package:hairfly/widgets/list_tile.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 
 class MapPage extends StatelessWidget {
   MapPage({Key? key}) : super(key: key);
@@ -24,8 +23,10 @@ class MapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => FlutterMap(
-        mapController: _mapCtrl.mapController,
+        // mapController: _mapCtrl.mapController,
         options: MapOptions(
+            onMapCreated: ((mapController) =>
+                _mapCtrl.mapController = mapController),
             interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
             nePanBoundary: kNePanBoundary,
             swPanBoundary: kSwPanBoundary,
@@ -51,191 +52,158 @@ class MapPage extends StatelessWidget {
             tileProvider: const CachedTileProvider(),
           ),
           MarkerLayerOptions(
-              markers: _shopCtrl.shopList
-                  .asMap()
-                  .keys
-                  .toList()
-                  .map(
-                    (e) => Marker(
-                      height: 800,
-                      width: 320,
-                      anchorPos: AnchorPos.align(AnchorAlign.top),
-                      point: _shopCtrl.shopList[e].latLon!,
-                      builder: (_) => Obx(
-                        () => Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            _shopCtrl.selectedShopIndex.value != e
-                                ? const SizedBox.shrink()
-                                // detail box for the selected shop on map
-                                : Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, left: 10),
-                                      child: Column(
+              markers: _shopCtrl.shopList.asMap().keys.toList().map((e) {
+            var _shop = _shopCtrl.shopList[e];
+            return Marker(
+              height: 800,
+              width: 320,
+              anchorPos: AnchorPos.align(AnchorAlign.top),
+              point: _shop.latLon!,
+              builder: (_) => Obx(
+                () => Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _shopCtrl.selectedShopIndex.value != e
+                        ? const SizedBox.shrink()
+                        // detail box for the selected shop on map
+                        : Card(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Card(
+                                        elevation: 5,
+                                        shadowColor: Theme.of(context)
+                                            .appBarTheme
+                                            .backgroundColor,
+                                        child: SizedBox(
+                                            height: Get.height * 0.2 * 2 / 3,
+                                            width: Get.height * 0.2,
+                                            child: myImage(_shop.img!, 'shop')),
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.center,
                                         children: [
-                                          Row(
-                                            children: [
-                                              Card(
-                                                elevation: 5,
-                                                shadowColor: Theme.of(context)
-                                                    .appBarTheme
-                                                    .backgroundColor,
-                                                child: SizedBox(
-                                                    height: 120,
-                                                    width: 180,
-                                                    child: myImage(
-                                                        _shopCtrl
-                                                            .shopList[e].img!,
-                                                        'shop')),
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  //shop name
-                                                  Card(
-                                                    elevation: 10,
-                                                    child: Text(
-                                                      _shopCtrl
-                                                          .shopList[e].name!,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: kShopNameInMap,
-                                                    ),
-                                                  ),
-                                                  // rating bar
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 10),
-                                                    child: RatingBarIndicator(
-                                                      rating: _shopCtrl
-                                                          .shopRating(_shopCtrl
-                                                              .shopList[e]
-                                                              .rating),
-                                                      itemBuilder:
-                                                          (context, index) =>
-                                                              const Icon(
-                                                        Icons.cut,
-                                                        color: Colors.amber,
-                                                      ),
-                                                      itemSize: 20,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '('
-                                                            '${_shopCtrl.shopReviwer(_shopCtrl.shopList[e].rating)} ' +
-                                                        'review'.trPlural(
-                                                            'reviews',
-                                                            _shopCtrl.shopReviwer(
-                                                                _shopCtrl
-                                                                    .shopList[e]
-                                                                    .rating)) +
-                                                        ')',
-                                                    style: const TextStyle(
-                                                        fontStyle:
-                                                            FontStyle.italic,
-                                                        fontSize: 10),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          mapListTile(
-                                            Icons.home,
-                                            GestureDetector(
-                                              onTap: () => {
-                                                MapsLauncher.launchCoordinates(
-                                                    _shopCtrl.shopList[e]
-                                                        .latLon!.latitude,
-                                                    _shopCtrl.shopList[e]
-                                                        .latLon!.longitude)
-                                              },
-                                              child: Text(
-                                                _localeCtrl.localeIdx == 0
-                                                    ? _shopCtrl
-                                                        .shopList[e].address!
-                                                    : _shopCtrl
-                                                        .shopList[e].addressZh!,
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    decoration: TextDecoration
-                                                        .underline),
-                                              ),
+                                          //shop name
+                                          Card(
+                                            elevation: 10,
+                                            child: Text(
+                                              _shop.name!,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: kShopNameInMap,
                                             ),
                                           ),
-                                          mapListTile(
-                                            Icons.phone,
-                                            Text(
-                                              _shopCtrl.shopList[e].tel!
-                                                  .toString(),
-                                              style:
-                                                  const TextStyle(fontSize: 12),
+                                          // rating bar
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: RatingBarIndicator(
+                                              rating: _shopCtrl
+                                                  .shopRating(_shop.rating),
+                                              itemBuilder: (context, index) =>
+                                                  const Icon(
+                                                Icons.cut,
+                                                color: Colors.amber,
+                                              ),
+                                              itemSize: 20,
                                             ),
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              IconButton(
-                                                  icon: const Icon(
-                                                      Icons.arrow_back),
-                                                  onPressed: () {
-                                                    _shopCtrl.cancelShopOnMap(
-                                                        () => _mapCtrl
-                                                            .animatedMapMove(
-                                                                kCenter,
-                                                                kZoom
-                                                                    .toDouble()));
-                                                  }),
-                                              TextButton(
-                                                  onPressed: () {},
-                                                  child:
-                                                      Text('book_on_map'.tr)),
-                                            ],
+                                          Text(
+                                            _shopCtrl.toNumOfReviewString(
+                                                _shopCtrl.shopReviwer(_shopCtrl
+                                                    .shopList[e].rating),
+                                                'review',
+                                                'reviews'),
+                                            style: const TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 10),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    elevation: 5,
-                                    shadowColor: Colors.grey,
+                                    ],
                                   ),
-                            // the shop's icon displayed on the map
-                            // the icon will not be visible if other is selected
-                            _shopCtrl.selectedShopIndex.value != -1 &&
-                                    _shopCtrl.selectedShopIndex.value != e
-                                ? const SizedBox.shrink()
-                                : GestureDetector(
-                                    child: const Icon(
-                                      Icons.pin_drop,
+                                  myMapListTile(
+                                    Icons.home,
+                                    GestureDetector(
+                                      onTap: () => {
+                                        MapsLauncher.launchCoordinates(
+                                            _shopCtrl
+                                                .shopList[e].latLon!.latitude,
+                                            _shopCtrl
+                                                .shopList[e].latLon!.longitude)
+                                      },
+                                      child: Text(
+                                        _localeCtrl.localeIdx == 0
+                                            ? _shop.address!
+                                            : _shop.addressZh!,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            decoration:
+                                                TextDecoration.underline),
+                                      ),
                                     ),
-                                    onTap: () {
-                                      _shopCtrl.selectShopOnMap(
-                                          e,
-                                          () => _mapCtrl.animatedMapMove(
-                                              kCenter, kZoom.toDouble()),
-                                          () => _mapCtrl.animatedMapMove(
-                                              LatLng(
-                                                  _shopCtrl.shopList[e].latLon!
-                                                          .latitude +
-                                                      kLatOffset,
-                                                  _shopCtrl.shopList[e].latLon!
-                                                      .longitude),
-                                              15));
-                                    },
                                   ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList()),
+                                  myMapListTile(
+                                    Icons.phone,
+                                    Text(
+                                      _shop.tel!.toString(),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                          icon: const Icon(Icons.arrow_back),
+                                          onPressed: () {
+                                            _shopCtrl.cancelShopOnMap(() =>
+                                                _mapCtrl.animatedMapMove(
+                                                    kCenter, kZoom.toDouble()));
+                                          }),
+                                      TextButton(
+                                          onPressed: () {},
+                                          child: Text('detail'.tr)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            elevation: 5,
+                            shadowColor: Colors.grey,
+                          ),
+                    // the shop's icon displayed on the map
+                    // the icon will not be visible if other is selected
+                    _shopCtrl.selectedShopIndex.value != -1 &&
+                            _shopCtrl.selectedShopIndex.value != e
+                        ? const SizedBox.shrink()
+                        : GestureDetector(
+                            child: const Icon(
+                              Icons.pin_drop,
+                            ),
+                            onTap: () {
+                              _shopCtrl.selectShopOnMap(
+                                  e,
+                                  () => _mapCtrl.animatedMapMove(
+                                      kCenter, kZoom.toDouble()),
+                                  () => _mapCtrl.animatedMapMove(
+                                      LatLng(
+                                          _shop.latLon!.latitude + kLatOffset,
+                                          _shop.latLon!.longitude),
+                                      15));
+                            },
+                          ),
+                  ],
+                ),
+              ),
+            );
+          }).toList()),
         ],
       ),
     );

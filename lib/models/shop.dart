@@ -12,6 +12,7 @@ class ShopModel {
   String? openHour;
   int? tel;
   List<dynamic>? rating;
+  Map<String, dynamic>? services;
 
   ShopModel({
     this.id,
@@ -24,6 +25,7 @@ class ShopModel {
     this.openHour,
     this.description,
     this.rating,
+    this.services,
   });
 
   factory ShopModel.fromJson(Map<String, dynamic> json) => ShopModel(
@@ -36,6 +38,7 @@ class ShopModel {
         tel: json['tel'],
         description: json['description'],
         rating: json['rating']?.values.toList() ?? [],
+        services: json['services'],
       );
 
   factory ShopModel.fromSnapShot(QueryDocumentSnapshot queryDocumentSnapshot) {
