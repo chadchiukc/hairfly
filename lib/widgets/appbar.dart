@@ -108,6 +108,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 left: 20,
                 child: GestureDetector(
                   onTap: () {
+                    print(Get.previousRoute);
                     Get.offNamed(Get.previousRoute);
                   },
                   child: AnimatedOpacity(

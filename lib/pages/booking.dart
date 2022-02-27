@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:hairfly/controllers/booking.dart';
 import 'package:hairfly/controllers/locale.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/models/service.dart';
@@ -8,10 +9,14 @@ import 'package:hairfly/pages/not_exist.dart';
 import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/widgets/background.dart';
+import 'package:hairfly/widgets/center_text.dart';
+import 'package:hairfly/widgets/divider.dart';
+import 'package:hairfly/widgets/heading.dart';
 import 'package:hairfly/widgets/image_network.dart';
 import 'package:hairfly/widgets/list_tile.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class BookingPage extends StatelessWidget {
   BookingPage({Key? key}) : super(key: key);
@@ -19,6 +24,7 @@ class BookingPage extends StatelessWidget {
   // String shopId = '2nJn5YjMfD2vI1qKtzob';
   final ShopCtrl _shopCtrl = Get.find();
   final LocaleCtrl _localeCtrl = Get.find();
+  final BookingCtrl _bookingCtrl = Get.put(BookingCtrl());
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +220,119 @@ class BookingPage extends StatelessWidget {
                                                     child: Container(
                                                       color: kAppBarColor,
                                                       child: TextButton(
-                                                          onPressed: () {},
+                                                          onPressed: () {
+                                                            Get.bottomSheet(
+                                                                Container(
+                                                                    decoration:
+                                                                        const BoxDecoration(
+                                                                      image: DecorationImage(
+                                                                          image: AssetImage(
+                                                                              'assets/images/background.png'),
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.all(
+                                                                              Radius.circular(20.0)),
+                                                                    ),
+                                                                    height:
+                                                                        Get.height *
+                                                                            0.80,
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              8.0),
+                                                                      child:
+                                                                          Column(
+                                                                        children: [
+                                                                          myHeading(_shopCtrl
+                                                                              .getShop!
+                                                                              .name!),
+                                                                          myDivider(),
+                                                                          myHeading(
+                                                                              'selectDate'.tr,
+                                                                              trailing: GestureDetector(
+                                                                                  onTap: (() => Get.defaultDialog(
+                                                                                        title: '',
+                                                                                        content: SizedBox(
+                                                                                          width: 500,
+                                                                                          height: 400,
+                                                                                          child: Column(
+                                                                                            children: [
+                                                                                              Obx(
+                                                                                                () => TableCalendar(
+                                                                                                  locale: 'zh_HK',
+                                                                                                  calendarStyle: const CalendarStyle(
+                                                                                                    outsideDaysVisible: false,
+                                                                                                    isTodayHighlighted: false,
+                                                                                                    weekendTextStyle: TextStyle(color: Colors.red),
+                                                                                                  ),
+                                                                                                  headerStyle: const HeaderStyle(formatButtonVisible: false),
+                                                                                                  startingDayOfWeek: StartingDayOfWeek.monday,
+                                                                                                  focusedDay: _bookingCtrl.focusedDay.value,
+                                                                                                  firstDay: _bookingCtrl.firstDay,
+                                                                                                  lastDay: _bookingCtrl.lastDay,
+                                                                                                  calendarFormat: CalendarFormat.month,
+                                                                                                  // holidayPredicate: (day) =>
+                                                                                                  //     day.weekday == DateTime.saturday ||
+                                                                                                  //     day.weekday == DateTime.sunday,
+                                                                                                  selectedDayPredicate: (day) {
+                                                                                                    return isSameDay(_bookingCtrl.selectedDay.value, day);
+                                                                                                  },
+                                                                                                  onDaySelected: (selectedDay, focusedDay) {
+                                                                                                    _bookingCtrl.selectedDay.value = selectedDay;
+                                                                                                    _bookingCtrl.focusedDay.value = focusedDay;
+                                                                                                  },
+                                                                                                ),
+                                                                                              ),
+                                                                                              Row(
+                                                                                                children: [
+                                                                                                  ElevatedButton(
+                                                                                                    onPressed: () {
+                                                                                                      print(_bookingCtrl.confirmedDay.toString());
+                                                                                                      Get.back();
+                                                                                                    },
+                                                                                                    child: Text('cancel'.tr),
+                                                                                                  ),
+                                                                                                  ElevatedButton(
+                                                                                                    onPressed: () {
+                                                                                                      _bookingCtrl.confirmDate();
+                                                                                                      print(_bookingCtrl.confirmedDay.toString());
+                                                                                                      Get.back();
+                                                                                                    },
+                                                                                                    child: Text('confirm'.tr),
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                      )),
+                                                                                  child: const Icon(Icons.edit))),
+                                                                          Obx(
+                                                                            () => _bookingCtrl.noOfDayUpdated.value == 0
+                                                                                ? myCenterText(null)
+                                                                                : myCenterText(_bookingCtrl.confirmedDay?.toString()),
+                                                                          ),
+                                                                          myDivider(),
+                                                                          myHeading(
+                                                                              'selectTime'.tr,
+                                                                              trailing: const Icon(Icons.edit)),
+                                                                          myCenterText(
+                                                                              null),
+                                                                          myDivider(),
+                                                                          myHeading(
+                                                                              'selectService'.tr,
+                                                                              trailing: const Icon(Icons.edit)),
+                                                                          myDivider(),
+                                                                        ],
+                                                                      ),
+                                                                    )),
+                                                                isScrollControlled:
+                                                                    true);
+                                                          },
                                                           child: Text(
                                                             'book'.tr,
                                                             style:
@@ -266,14 +384,7 @@ class BookingPage extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                const Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 20.0),
-                                  child: Divider(
-                                    height: 3,
-                                    thickness: 3,
-                                  ),
-                                ),
+                                myDivider(),
                                 ..._shopCtrl.selectedShopServices
                                     .map((ServiceModel e) => Padding(
                                           padding: EdgeInsets.symmetric(

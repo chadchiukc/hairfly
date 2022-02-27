@@ -13,6 +13,8 @@ class ShopCtrl extends GetxController {
   var isFetch = false.obs;
   RxList<ServiceModel> selectedShopServices = <ServiceModel>[].obs;
 
+  ShopModel? get getShop => selectedShop.value;
+
   @override
   void onInit() async {
     await queryShops();

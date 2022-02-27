@@ -72,6 +72,10 @@ class MyTranslations extends Translations {
           'priceList': 'Price List',
           'price': 'Price \$',
           'service': 'Services',
+          'selectDate': 'Select Date',
+          'selectTime': 'Select Time',
+          'selectService': 'Select Service',
+          'notSelect': 'Ple',
         },
         'zh_HK': {
           'explore': '探索HairFly',
@@ -141,6 +145,10 @@ class MyTranslations extends Translations {
           'priceList': '價格表',
           'price': '價錢 \$',
           'service': '服務',
+          'selectDate': '',
+          'selectTime': '',
+          'selectService': '',
+          'notSelect': '',
         }
       };
 }
