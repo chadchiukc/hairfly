@@ -1,12 +1,18 @@
+import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:hairfly/controllers/auth.dart';
 import 'package:hairfly/controllers/booking.dart';
 import 'package:hairfly/controllers/locale.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/models/service.dart';
 import 'package:hairfly/pages/not_exist.dart';
 import 'package:hairfly/utils/constant.dart';
+import 'package:hairfly/utils/database.dart';
+import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/widgets/background.dart';
 import 'package:hairfly/widgets/center_text.dart';
@@ -14,6 +20,7 @@ import 'package:hairfly/widgets/divider.dart';
 import 'package:hairfly/widgets/heading.dart';
 import 'package:hairfly/widgets/image_network.dart';
 import 'package:hairfly/widgets/list_tile.dart';
+import 'package:hairfly/widgets/my_buttom.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -25,6 +32,7 @@ class BookingPage extends StatelessWidget {
   final ShopCtrl _shopCtrl = Get.find();
   final LocaleCtrl _localeCtrl = Get.find();
   final BookingCtrl _bookingCtrl = Get.put(BookingCtrl());
+  final AuthController _authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +45,13 @@ class BookingPage extends StatelessWidget {
                 desktop: Get.width * 0.16)),
         decoration: kBackground,
         child: Obx(() {
-          _shopCtrl.selectServicesToList(shopId);
+          _shopCtrl.selectShop(shopId);
+          _bookingCtrl.changeMinMaxTimeRange(
+              _shopCtrl.selectedShop.value?.openHour ?? '1100-2200');
           return !_shopCtrl.isFetch.value
               ? const Center(child: CircularProgressIndicator())
               : _shopCtrl.selectedShop.value == null
-                  ? NotExistPage()
+                  ? const NotExistPage()
                   : Scaffold(
                       backgroundColor: Colors.transparent,
                       body: CustomScrollView(
@@ -64,7 +74,8 @@ class BookingPage extends StatelessWidget {
                                               clipBehavior: Clip.none,
                                               children: [
                                                 SizedBox(
-                                                    height: 300,
+                                                    width: Get.width,
+                                                    // height: 300,
                                                     child: myImage(
                                                         _shopCtrl.selectedShop
                                                             .value!.img!,
@@ -221,117 +232,227 @@ class BookingPage extends StatelessWidget {
                                                       color: kAppBarColor,
                                                       child: TextButton(
                                                           onPressed: () {
-                                                            Get.bottomSheet(
-                                                                Container(
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      image: DecorationImage(
-                                                                          image: AssetImage(
-                                                                              'assets/images/background.png'),
-                                                                          fit: BoxFit
-                                                                              .cover),
-                                                                      color: Colors
-                                                                          .white,
-                                                                      borderRadius:
-                                                                          BorderRadius.all(
-                                                                              Radius.circular(20.0)),
-                                                                    ),
-                                                                    height:
-                                                                        Get.height *
-                                                                            0.80,
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              8.0),
+                                                            if (_authController
+                                                                    .user !=
+                                                                null) {
+                                                              // book now bottomsheet
+                                                              Get.bottomSheet(
+                                                                  Container(
+                                                                      decoration:
+                                                                          const BoxDecoration(
+                                                                        image: DecorationImage(
+                                                                            image:
+                                                                                AssetImage('assets/images/background.png'),
+                                                                            fit: BoxFit.cover),
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(20.0)),
+                                                                      ),
+                                                                      height: Get
+                                                                              .height *
+                                                                          0.80,
                                                                       child:
-                                                                          Column(
-                                                                        children: [
-                                                                          myHeading(_shopCtrl
-                                                                              .getShop!
-                                                                              .name!),
-                                                                          myDivider(),
-                                                                          myHeading(
-                                                                              'selectDate'.tr,
-                                                                              trailing: GestureDetector(
-                                                                                  onTap: (() => Get.defaultDialog(
-                                                                                        title: '',
-                                                                                        content: SizedBox(
-                                                                                          width: 500,
-                                                                                          height: 400,
-                                                                                          child: Column(
-                                                                                            children: [
-                                                                                              Obx(
-                                                                                                () => TableCalendar(
-                                                                                                  locale: 'zh_HK',
-                                                                                                  calendarStyle: const CalendarStyle(
-                                                                                                    outsideDaysVisible: false,
-                                                                                                    isTodayHighlighted: false,
-                                                                                                    weekendTextStyle: TextStyle(color: Colors.red),
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(8.0),
+                                                                        child:
+                                                                            Column(
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(bottom: 16.0),
+                                                                              child: myHeading(_shopCtrl.getShop!.name!),
+                                                                            ),
+                                                                            myDivider(),
+                                                                            myHeading('selectDate'.tr,
+                                                                                trailing: GestureDetector(
+                                                                                    onTap: (() => Get.defaultDialog(
+                                                                                          title: 'selectYourDate'.tr,
+                                                                                          content: SizedBox(
+                                                                                            width: 500,
+                                                                                            height: 400,
+                                                                                            child: Column(
+                                                                                              children: [
+                                                                                                Obx(
+                                                                                                  () => TableCalendar(
+                                                                                                    calendarStyle: const CalendarStyle(
+                                                                                                      outsideDaysVisible: false,
+                                                                                                      isTodayHighlighted: false,
+                                                                                                      weekendTextStyle: TextStyle(color: Colors.red),
+                                                                                                    ),
+                                                                                                    headerStyle: const HeaderStyle(formatButtonVisible: false),
+                                                                                                    startingDayOfWeek: StartingDayOfWeek.monday,
+                                                                                                    focusedDay: _bookingCtrl.focusedDay.value,
+                                                                                                    firstDay: _bookingCtrl.firstDay,
+                                                                                                    lastDay: _bookingCtrl.lastDay,
+                                                                                                    calendarFormat: CalendarFormat.month,
+                                                                                                    selectedDayPredicate: (day) {
+                                                                                                      return isSameDay(_bookingCtrl.selectedDay.value, day);
+                                                                                                    },
+                                                                                                    onDaySelected: (selectedDay, focusedDay) {
+                                                                                                      _bookingCtrl.selectedDay.value = selectedDay;
+                                                                                                      _bookingCtrl.focusedDay.value = focusedDay;
+                                                                                                    },
                                                                                                   ),
-                                                                                                  headerStyle: const HeaderStyle(formatButtonVisible: false),
-                                                                                                  startingDayOfWeek: StartingDayOfWeek.monday,
-                                                                                                  focusedDay: _bookingCtrl.focusedDay.value,
-                                                                                                  firstDay: _bookingCtrl.firstDay,
-                                                                                                  lastDay: _bookingCtrl.lastDay,
-                                                                                                  calendarFormat: CalendarFormat.month,
-                                                                                                  // holidayPredicate: (day) =>
-                                                                                                  //     day.weekday == DateTime.saturday ||
-                                                                                                  //     day.weekday == DateTime.sunday,
-                                                                                                  selectedDayPredicate: (day) {
-                                                                                                    return isSameDay(_bookingCtrl.selectedDay.value, day);
-                                                                                                  },
-                                                                                                  onDaySelected: (selectedDay, focusedDay) {
-                                                                                                    _bookingCtrl.selectedDay.value = selectedDay;
-                                                                                                    _bookingCtrl.focusedDay.value = focusedDay;
+                                                                                                ),
+                                                                                                Row(
+                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                                                  children: [
+                                                                                                    cancelButtom(() {
+                                                                                                      Get.back();
+                                                                                                    }),
+                                                                                                    confirmButton(() {
+                                                                                                      _bookingCtrl.confirmDate();
+                                                                                                      Get.back();
+                                                                                                    }),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        )),
+                                                                                    child: const Icon(Icons.edit))),
+                                                                            Obx(() =>
+                                                                                myCenterText(_bookingCtrl.displayDate.value)),
+                                                                            // ),
+                                                                            myDivider(),
+                                                                            myHeading('selectTime'.tr,
+                                                                                trailing: GestureDetector(
+                                                                                    onTap: () {
+                                                                                      Get.defaultDialog(
+                                                                                          title: 'selectYourTime'.tr,
+                                                                                          content: Column(
+                                                                                            children: [
+                                                                                              SizedBox(
+                                                                                                height: 300,
+                                                                                                child: CupertinoDatePicker(
+                                                                                                  minimumDate: _bookingCtrl.minimumDate,
+                                                                                                  maximumDate: _bookingCtrl.maximumDate,
+                                                                                                  initialDateTime: _bookingCtrl.initialDate.value,
+                                                                                                  minuteInterval: 5,
+                                                                                                  mode: CupertinoDatePickerMode.time,
+                                                                                                  use24hFormat: true,
+                                                                                                  onDateTimeChanged: (date) {
+                                                                                                    _bookingCtrl.selectedTime.value = date;
                                                                                                   },
                                                                                                 ),
                                                                                               ),
                                                                                               Row(
+                                                                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                                                                 children: [
-                                                                                                  ElevatedButton(
-                                                                                                    onPressed: () {
-                                                                                                      print(_bookingCtrl.confirmedDay.toString());
-                                                                                                      Get.back();
-                                                                                                    },
-                                                                                                    child: Text('cancel'.tr),
-                                                                                                  ),
-                                                                                                  ElevatedButton(
-                                                                                                    onPressed: () {
-                                                                                                      _bookingCtrl.confirmDate();
-                                                                                                      print(_bookingCtrl.confirmedDay.toString());
-                                                                                                      Get.back();
-                                                                                                    },
-                                                                                                    child: Text('confirm'.tr),
-                                                                                                  ),
+                                                                                                  cancelButtom(() {
+                                                                                                    Get.back();
+                                                                                                  }),
+                                                                                                  confirmButton(() {
+                                                                                                    _bookingCtrl.confirmTime();
+                                                                                                    Get.back();
+                                                                                                  }),
                                                                                                 ],
                                                                                               ),
                                                                                             ],
+                                                                                          ));
+                                                                                    },
+                                                                                    child: const Icon(Icons.edit))),
+                                                                            Obx(() =>
+                                                                                myCenterText(_bookingCtrl.displayTime.value)),
+                                                                            myDivider(),
+                                                                            myHeading('selectService'.tr),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.all(8.0),
+                                                                              child: CustomCheckBoxGroup(
+                                                                                unSelectedColor: Colors.white,
+                                                                                buttonLables: _bookingCtrl.servicesToLabel(_shopCtrl.selectedShopServices),
+                                                                                buttonValuesList: _bookingCtrl.servicesToValue(_shopCtrl.selectedShopServices),
+                                                                                checkBoxButtonValues: (values) {
+                                                                                  _bookingCtrl.selectService(values, _shopCtrl.selectedShop.value?.services);
+                                                                                },
+                                                                                spacing: 0,
+                                                                                enableShape: true,
+                                                                                horizontal: false,
+                                                                                elevation: 5,
+                                                                                autoWidth: true,
+                                                                                enableButtonWrap: true,
+                                                                                height: 30,
+                                                                                selectedColor: Colors.pink,
+                                                                              ),
+                                                                            ),
+
+                                                                            myDivider(),
+                                                                            myHeading('price'.tr),
+                                                                            Obx(() =>
+                                                                                myCenterText('\$' + _bookingCtrl.displayValue.value.toString())),
+                                                                            myDivider(),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.all(10.0),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                children: [
+                                                                                  cancelButtom(() {
+                                                                                    Get.back();
+                                                                                  }),
+                                                                                  const SizedBox(
+                                                                                    width: 20,
+                                                                                  ),
+                                                                                  confirmButton(() async {
+                                                                                    EasyLoading.show(status: 'loading'.tr);
+                                                                                    if (_bookingCtrl.confirmBooking()) {
+                                                                                      if (await Database().addBooking(_bookingCtrl.selectedService, _shopCtrl.selectedShop.value!.id!, _bookingCtrl.selectedDateTime, _authController.user!, _bookingCtrl.displayValue.value)) {
+                                                                                        Get.back();
+                                                                                        Get.snackbar(
+                                                                                          'successBooking'.tr,
+                                                                                          'checkStatus'.tr,
+                                                                                          titleText: Text('successBooking'.tr),
+                                                                                          backgroundColor: Colors.white,
+                                                                                          messageText: SizedBox(
+                                                                                            height: Get.height * 0.15,
+                                                                                            child: Column(
+                                                                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                                              children: [
+                                                                                                const Icon(Icons.verified_outlined, size: 50),
+                                                                                                Text('checkStatus'.tr),
+                                                                                              ],
+                                                                                            ),
                                                                                           ),
-                                                                                        ),
-                                                                                      )),
-                                                                                  child: const Icon(Icons.edit))),
-                                                                          Obx(
-                                                                            () => _bookingCtrl.noOfDayUpdated.value == 0
-                                                                                ? myCenterText(null)
-                                                                                : myCenterText(_bookingCtrl.confirmedDay?.toString()),
-                                                                          ),
-                                                                          myDivider(),
-                                                                          myHeading(
-                                                                              'selectTime'.tr,
-                                                                              trailing: const Icon(Icons.edit)),
-                                                                          myCenterText(
-                                                                              null),
-                                                                          myDivider(),
-                                                                          myHeading(
-                                                                              'selectService'.tr,
-                                                                              trailing: const Icon(Icons.edit)),
-                                                                          myDivider(),
-                                                                        ],
-                                                                      ),
-                                                                    )),
-                                                                isScrollControlled:
-                                                                    true);
+                                                                                          duration: const Duration(seconds: 8),
+                                                                                        );
+                                                                                      } else {
+                                                                                        Get.snackbar('wrongMsg'.tr, 'tryAgain'.tr);
+                                                                                      }
+                                                                                    }
+                                                                                    EasyLoading.dismiss();
+                                                                                  }),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      )),
+                                                                  isScrollControlled:
+                                                                      true);
+                                                            } else {
+                                                              Get.defaultDialog(
+                                                                  title:
+                                                                      'warning'
+                                                                          .tr,
+                                                                  content: Text(
+                                                                      'requireLogin'
+                                                                          .tr),
+                                                                  confirm: confirmButton(
+                                                                      () {
+                                                                    Get.offAllNamed(
+                                                                        Routes
+                                                                            .login,
+                                                                        arguments:
+                                                                            Get.currentRoute);
+                                                                  },
+                                                                      text: 'login'
+                                                                          .tr),
+                                                                  cancel:
+                                                                      cancelButtom(
+                                                                          () {
+                                                                    Get.back();
+                                                                  }));
+                                                            }
                                                           },
                                                           child: Text(
                                                             'book'.tr,
@@ -395,7 +516,7 @@ class BookingPage extends StatelessWidget {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                e.name,
+                                                e.name.tr,
                                                 style: const TextStyle(
                                                     fontStyle:
                                                         FontStyle.italic),
@@ -408,7 +529,7 @@ class BookingPage extends StatelessWidget {
                                           ),
                                         ))
                                     .toList(),
-                                SizedBox(
+                                const SizedBox(
                                   height: 30,
                                 )
                               ]),

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -92,6 +91,49 @@ class Database {
     try {
       await ref.putData(data, metadata);
     } on FirebaseException catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> addBooking(List<dynamic> service, String shopId,
+      DateTime dateTime, String userId, int price) async {
+    try {
+      await _firestore.collection('bookings').add({
+        'service': service,
+        'shopId': shopId,
+        'bookDate': Timestamp.fromDate(DateTime(dateTime.year, dateTime.month,
+            dateTime.day, dateTime.hour, dateTime.minute)),
+        'by': Timestamp.fromDate(DateTime.now()),
+        'userId': userId,
+        'status': 0,
+        'price': price,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<QuerySnapshot> getBooking(String uid) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('bookings')
+          .orderBy('by', descending: true)
+          .where('userId', isEqualTo: uid)
+          .limit(10)
+          .get();
+      return querySnapshot;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<dynamic>> getService() async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('service').doc('services').get();
+      return ((documentSnapshot.data() as Map<String, dynamic>)['services']);
+    } catch (e) {
       rethrow;
     }
   }

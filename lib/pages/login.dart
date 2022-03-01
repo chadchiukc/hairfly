@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/controllers/auth.dart';
-import 'package:hairfly/pages/signup.dart';
 import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/widgets/background.dart';
-import 'package:hairfly/widgets/bottom_nav.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class LoginPage extends StatelessWidget {
@@ -16,7 +14,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _forgot = TextEditingController();
   final AuthController _authController = Get.find();
-  String returnUrl = Get.parameters['return'] ?? '/';
+
+  final returnUrl = Get.arguments ?? Routes.home;
 
   @override
   Widget build(BuildContext context) {
@@ -183,8 +182,8 @@ class LoginPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Get.offAndToNamed(
-                                        '${Routes.signup}?return=' + returnUrl);
+                                    Get.offAndToNamed(Routes.signup,
+                                        arguments: returnUrl);
                                   },
                                   child: Text(
                                     'createAccount'.tr,

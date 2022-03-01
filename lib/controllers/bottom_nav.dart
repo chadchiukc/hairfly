@@ -12,8 +12,8 @@ class NavCtrl extends GetxController with GetTickerProviderStateMixin {
 
   final _navPages = [
     Routes.home,
-    Routes.home,
-    Routes.home,
+    Routes.search,
+    Routes.status,
     Routes.profile,
   ];
 
@@ -33,15 +33,18 @@ class NavCtrl extends GetxController with GetTickerProviderStateMixin {
 
   void routingCallback(Routing? routing) {
     var currentRoute = routing?.current ?? '/';
-    if (currentRoute == Routes.home) {
-      _idx.value = 0;
-    }
     switch (currentRoute) {
       case Routes.home:
         _idx.value = 0;
         break;
       case Routes.profile:
         _idx.value = 3;
+        break;
+      case Routes.status:
+        _idx.value = 2;
+        break;
+      case Routes.search:
+        _idx.value = 1;
         break;
       default:
     }

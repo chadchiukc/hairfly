@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/utils/constant.dart';
+import 'package:hairfly/utils/routes.dart';
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
@@ -11,6 +12,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final bool backwardable;
   final Function()? editCallback;
   final bool borderRadius;
+  // String returnUrl = Get.parameters['return'] ?? '/';
+  final returnUrl = Get.arguments ?? Routes.home;
+  // final returnUrl = Get.arguments ?? Routes.home;
 
   MySliverAppBar(
       {required this.expandedHeight,
@@ -108,8 +112,12 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 left: 20,
                 child: GestureDetector(
                   onTap: () {
-                    print(Get.previousRoute);
-                    Get.offNamed(Get.previousRoute);
+                    if (returnUrl == Routes.profile ||
+                        returnUrl == Routes.status) {
+                      Get.offAllNamed(Routes.home);
+                    } else {
+                      Get.offNamed(returnUrl);
+                    }
                   },
                   child: AnimatedOpacity(
                     opacity: shrinkOffset > 30 ? 0 : 1,

@@ -3,13 +3,21 @@ import 'package:hairfly/pages/booking.dart';
 import 'package:hairfly/pages/home.dart';
 import 'package:hairfly/pages/login.dart';
 import 'package:hairfly/pages/profile.dart';
+import 'package:hairfly/pages/search.dart';
 import 'package:hairfly/pages/signup.dart';
+import 'package:hairfly/pages/status.dart';
 import 'package:hairfly/utils/middleware.dart';
 
 routes() => [
       GetPage(
         name: Routes.home,
         page: () => HomePage(),
+        transition: Transition.fade,
+        // middlewares: [allMiddleware()],
+      ),
+      GetPage(
+        name: Routes.search,
+        page: () => SearchPage(),
         transition: Transition.fade,
         // middlewares: [allMiddleware()],
       ),
@@ -32,6 +40,12 @@ routes() => [
         middlewares: [AuthMiddleware()],
       ),
       GetPage(
+        name: Routes.status,
+        page: () => StatusPage(),
+        transition: Transition.fade,
+        middlewares: [AuthMiddleware()],
+      ),
+      GetPage(
         name: '${Routes.booking}/:id',
         page: () => BookingPage(),
         transition: Transition.fade,
@@ -44,4 +58,6 @@ class Routes {
   static const signup = '/signup';
   static const profile = '/profile';
   static const booking = '/booking';
+  static const status = '/status';
+  static const search = '/search';
 }

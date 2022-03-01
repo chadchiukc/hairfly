@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/controllers/carousel.dart';
 import 'package:hairfly/controllers/locale.dart';
+import 'package:hairfly/controllers/search.dart';
 import 'package:hairfly/controllers/shops.dart';
-import 'package:hairfly/pages/profile.dart';
-import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/pages/home/map.dart';
 import 'package:hairfly/utils/constant.dart';
-import 'package:hairfly/utils/database.dart';
 import 'package:hairfly/widgets/background.dart';
 import 'package:hairfly/widgets/bottom_nav.dart';
 import 'package:hairfly/widgets/explore_card.dart';
 import 'package:hairfly/pages/home/carousel.dart';
 import 'package:hairfly/widgets/heading.dart';
-import 'package:hairfly/widgets/image_network.dart';
-import 'package:hairfly/widgets/list_tile.dart';
-import 'package:maps_launcher/maps_launcher.dart';
+import 'package:hairfly/widgets/shop_card.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -27,6 +21,7 @@ class HomePage extends StatelessWidget {
   final LocaleCtrl _localeCtrl = Get.find();
   final CarouselCtrl _carouselCtrl = Get.find();
   final ShopCtrl _shopCtrl = Get.find();
+  final SearchCtrl _searchCtrl = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +83,8 @@ class HomePage extends StatelessWidget {
                                     'haircuts'.tr,
                                     'assets/images/cut.png',
                                     imageRatio: 2.2,
+                                    callback: () =>
+                                        _searchCtrl.exploreToSearch('haircut'),
                                   ),
                                 ),
                                 Expanded(
@@ -101,12 +98,16 @@ class HomePage extends StatelessWidget {
                                           'color'.tr,
                                           'assets/images/color.png',
                                           imageRatio: 1.5,
+                                          callback: () => _searchCtrl
+                                              .exploreToSearch('color'),
                                         )),
                                     Expanded(
                                         flex: 2,
                                         child: ExploreCard(
                                           'treatment'.tr,
                                           'assets/images/treatment.png',
+                                          callback: () => _searchCtrl
+                                              .exploreToSearch('treatment'),
                                         ))
                                   ],
                                 ))
@@ -123,12 +124,19 @@ class HomePage extends StatelessWidget {
                                     'perm'.tr,
                                     'assets/images/perm.png',
                                     imageRatio: 1.5,
+                                    callback: () =>
+                                        _searchCtrl.exploreToSearch('perm'),
                                   )),
                                   Expanded(
                                       child: ExploreCard(
                                     'join'.tr,
                                     'assets/images/join.png',
                                     imageRatio: 1.5,
+                                    callback: () {
+                                      Get.defaultDialog(
+                                          title: 'joinUsTitle'.tr,
+                                          middleText: 'joinUsMiddleText'.tr);
+                                    },
                                   ))
                                 ],
                               ))
@@ -178,170 +186,11 @@ class HomePage extends StatelessWidget {
               () => SliverList(
                 delegate: SliverChildBuilderDelegate((_, idx) {
                   var _shop = _shopCtrl.shopList[idx];
-                  return Card(
-                      elevation: 5,
-                      color: Colors.white.withOpacity(0.6),
-                      shadowColor: kAppBarColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Stack(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Card(
-                                  elevation: 10,
-                                  color: Colors.transparent,
-                                  shadowColor: kAppBarColor,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(2)),
-                                    child: SizedBox(
-                                        height: getValueForScreenType(
-                                            context: context,
-                                            mobile: Get.width * 0.4,
-                                            tablet: Get.width * 0.3,
-                                            desktop: Get.width * 0.25),
-                                        width: getValueForScreenType(
-                                            context: context,
-                                            mobile: Get.width * 0.5,
-                                            tablet: Get.width * 0.4,
-                                            desktop: Get.width * 0.35),
-                                        child: myImage(_shop.img!, 'shop')),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 4.0),
-                                          child: Text(_shop.name!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                              )),
-                                        ),
-                                        myShopListTile(
-                                          Icons.home,
-                                          Flexible(
-                                              child: GestureDetector(
-                                                  onTap: () => {
-                                                        MapsLauncher
-                                                            .launchCoordinates(
-                                                                _shop.latLon!
-                                                                    .latitude,
-                                                                _shop.latLon!
-                                                                    .longitude)
-                                                      },
-                                                  child: Text(
-                                                    _localeCtrl.localeIdx == 0
-                                                        ? _shop.address!
-                                                        : _shop.addressZh!,
-                                                    maxLines: 3,
-                                                    style: const TextStyle(
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        fontSize: 12,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline),
-                                                  ))),
-                                        ),
-                                        myShopListTile(
-                                            Icons.phone,
-                                            Text(_shop.tel!.toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 12))),
-                                        myShopListTile(
-                                            Icons.alarm,
-                                            Text(_shop.openHour!.toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 12))),
-                                        myShopListTile(
-                                            Icons.room_service_outlined,
-                                            Expanded(
-                                              child: Wrap(
-                                                  spacing: 5,
-                                                  children: _shop.services!.keys
-                                                      .toList()
-                                                      .map((e) => Text(e,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 12,
-                                                          )))
-                                                      .toList()),
-                                            )),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    RatingBarIndicator(
-                                                      rating:
-                                                          _shopCtrl.shopRating(
-                                                              _shop.rating),
-                                                      itemBuilder:
-                                                          (context, index) =>
-                                                              const Icon(
-                                                        Icons.cut,
-                                                        color: Colors.amber,
-                                                      ),
-                                                      itemSize: 15,
-                                                    ),
-                                                    Text(
-                                                      _shopCtrl
-                                                          .toNumOfReviewString(
-                                                              _shopCtrl
-                                                                  .shopReviwer(
-                                                                      _shop
-                                                                          .rating),
-                                                              'review',
-                                                              'reviews'),
-                                                      style: const TextStyle(
-                                                          fontSize: 10,
-                                                          fontStyle:
-                                                              FontStyle.italic),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ]),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 5,
-                              child: TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: Size.zero,
-                                  ),
-                                  onPressed: () {
-                                    Get.toNamed(
-                                        '${Routes.booking}/${_shop.id}');
-                                  },
-                                  child: Text(
-                                    'detail'.tr,
-                                    style: const TextStyle(fontSize: 12),
-                                  )),
-                            )
-                          ],
-                        ),
-                      ));
+                  return shopCard(
+                      context: context,
+                      shop: _shop,
+                      localeCtrl: _localeCtrl,
+                      shopCtrl: _shopCtrl);
                 }, childCount: _shopCtrl.shopList.length),
               ),
             ),

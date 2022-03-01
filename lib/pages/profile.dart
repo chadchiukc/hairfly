@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/controllers/auth.dart';
-import 'package:hairfly/controllers/locale.dart';
 import 'package:hairfly/controllers/profile_image.dart';
 import 'package:hairfly/controllers/user.dart';
 import 'package:hairfly/utils/constant.dart';
@@ -48,8 +47,6 @@ class ProfilePage extends StatelessWidget {
                     imageProvider: _profileImageCtrl.versionNo.value == 0 &&
                             _profileImageCtrl.profileFile.value == null
                         ? const AssetImage('assets/images/profile.jpeg')
-                        // : FileImage(_profileImageCtrl.profileFile.value!)
-                        // as ImageProvider,
                         : MemoryImage(_profileImageCtrl.profileFile.value!)
                             as ImageProvider,
                     editable: true,

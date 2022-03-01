@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/models/service.dart';
 import 'package:hairfly/models/shop.dart';
@@ -7,7 +6,7 @@ import 'package:hairfly/utils/database.dart';
 
 class ShopCtrl extends GetxController {
   var shopList = <ShopModel>[].obs;
-  var filteredShopList = <ShopModel>[].obs;
+
   Rx<ShopModel?> selectedShop = null.obs;
   var selectedShopIndex = (-1).obs; //for selection on the map
   var isFetch = false.obs;
@@ -22,11 +21,7 @@ class ShopCtrl extends GetxController {
     super.onInit();
   }
 
-  // set selectShopIndex(int idx) => selectedShopIndex.value = idx;
-  // int get selectedShopIndex => _selectedShopIndex.value;
-
   Future<void> queryShops() async {
-    // EasyLoading.show(status: 'loading'.tr);
     try {
       QuerySnapshot _shops = await Database().getFromFirestore('shop');
       for (var element in _shops.docs) {
@@ -35,7 +30,6 @@ class ShopCtrl extends GetxController {
     } catch (e) {
       Get.snackbar("error".tr, 'tryAgain'.tr);
     }
-    // EasyLoading.dismiss();
   }
 
   void selectShopOnMap(
@@ -54,29 +48,6 @@ class ShopCtrl extends GetxController {
     selectedShopIndex.value = -1;
   }
 
-  void filterShop(String? searchText) {
-    if (searchText != null) {
-      for (var element in shopList) {
-        if (element.address!.toLowerCase().contains(searchText.toLowerCase())) {
-          filteredShopList.add(element);
-        }
-      }
-    } else {
-      filteredShopList.value = shopList;
-    }
-  }
-
-  // void selectShop(int index) {
-  //   selectedShop.value = ShopModel(
-  //     id: shopList[index].id,
-  //     address: shopList[index].address,
-  //     latLon: shopList[index].latLon,
-  //     img: shopList[index].img,
-  //     name: shopList[index].name,
-  //     openHour: shopList[index].openHour,
-  //   );
-  // }
-
   double shopRating(List<dynamic>? list) {
     if (list == null) {
       return -1;
@@ -93,6 +64,7 @@ class ShopCtrl extends GetxController {
     return '($num' ' ' + singleTr.trPlural(pluralTr, num) + ')';
   }
 
+  // for bottomsheet booking
   List<ServiceModel> convertServicesToList(Map? services) {
     if (services == null) {
       return [];
@@ -104,9 +76,8 @@ class ShopCtrl extends GetxController {
     return serviceList;
   }
 
-  void selectServicesToList(String? shopId) {
+  void selectShop(String? shopId) {
     selectedShop.value = null;
-    // selectedShopServices.clear();
     if (shopId != null) {
       selectedShopServices.clear();
       selectedShop = shopList.firstWhereOrNull((shop) => shop.id == shopId).obs;
@@ -117,12 +88,4 @@ class ShopCtrl extends GetxController {
       }
     }
   }
-  // void selectServicesToList(Map? services) {
-  //   selectedShopServices.clear();
-  //   if (services != null) {
-  //     services.forEach((key, value) {
-  //       selectedShopServices.add(ServiceModel(key, value));
-  //     });
-  //   }
-  // }
 }

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/controllers/bottom_nav.dart';
@@ -85,7 +84,7 @@ class AuthController extends GetxController {
       EasyLoading.dismiss();
       return true;
     } catch (e) {
-      Get.snackbar("wrontMsg".tr, e.toString());
+      Get.snackbar("wrongMsg".tr, e.toString());
       EasyLoading.dismiss();
       return false;
     }

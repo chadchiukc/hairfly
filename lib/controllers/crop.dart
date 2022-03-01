@@ -7,8 +7,6 @@ class CropCtrl extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
-    // cropController = CropController();
     isReady.value = true;
     super.onInit();
   }

@@ -7,7 +7,6 @@ import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/widgets/appbar.dart';
 import 'package:hairfly/widgets/background.dart';
-import 'package:hairfly/widgets/bottom_nav.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -20,7 +19,7 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController _phone = TextEditingController();
   final AuthController _authController = Get.find();
   final CarouselCtrl _carouselCtrl = Get.find();
-  String returnUrl = Get.parameters['return'] ?? '/';
+  final returnUrl = Get.arguments ?? Routes.home;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +100,7 @@ class SignUpPage extends StatelessWidget {
                                       if (!GetUtils.isEmail(value!)) {
                                         return 'emailReminder'.tr;
                                       }
+                                      return null;
                                     },
                                   ),
                                   TextFormField(
@@ -113,6 +113,7 @@ class SignUpPage extends StatelessWidget {
                                       if (value!.isEmpty) {
                                         return 'userNameEnter'.tr;
                                       }
+                                      return null;
                                     },
                                   ),
                                   TextFormField(
@@ -126,6 +127,7 @@ class SignUpPage extends StatelessWidget {
                                       if (value!.length < 6) {
                                         return 'passwordReminder'.tr;
                                       }
+                                      return null;
                                     },
                                   ),
                                   TextFormField(
@@ -167,9 +169,8 @@ class SignUpPage extends StatelessWidget {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Get.offAndToNamed(
-                                          '${Routes.login}?return=' +
-                                              returnUrl);
+                                      Get.offAndToNamed('${Routes.login}',
+                                          arguments: returnUrl);
                                     },
                                     child: Text(
                                       'signInHere'.tr,

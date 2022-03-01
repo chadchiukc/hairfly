@@ -6,12 +6,6 @@ import 'package:latlong2/latlong.dart';
 class MapCtrl extends GetxController with GetTickerProviderStateMixin {
   MapController mapController = MapController();
 
-  @override
-  void onInit() {
-    // mapController = MapController();
-    super.onInit();
-  }
-
   void animatedMapMove(LatLng destLocation, double destZoom) {
     final latTween = Tween<double>(
         begin: mapController.center.latitude, end: destLocation.latitude);

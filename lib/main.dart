@@ -8,12 +8,10 @@ import 'package:hairfly/controllers/auth.dart';
 import 'package:hairfly/controllers/bottom_nav.dart';
 import 'package:hairfly/controllers/carousel.dart';
 import 'package:hairfly/controllers/locale.dart';
+import 'package:hairfly/controllers/search.dart';
 import 'package:hairfly/controllers/shops.dart';
 import 'package:hairfly/firebase_options.dart';
-import 'package:hairfly/pages/booking.dart';
 import 'package:hairfly/pages/home.dart';
-import 'package:hairfly/pages/test.dart';
-import 'package:hairfly/pages/test2.dart';
 import 'package:hairfly/utils/constant.dart';
 import 'package:hairfly/utils/routes.dart';
 import 'package:hairfly/utils/translation.dart';
@@ -29,6 +27,7 @@ void main() async {
   Get.put(NavCtrl());
   Get.put(AuthController());
   Get.put(ShopCtrl());
+  Get.put(SearchCtrl());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }

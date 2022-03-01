@@ -74,7 +74,6 @@ class ProfileImageCtrl extends GetxController {
 
   void imageCropUpload(String? userId) async {
     Uint8List? img;
-    var isUpload = false;
     await Get.defaultDialog(
       title: 'profileChooseSource'.tr,
       middleText: '',

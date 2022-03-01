@@ -4,21 +4,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hairfly/controllers/auth.dart';
-import 'package:hairfly/controllers/bottom_nav.dart';
 import 'package:hairfly/utils/routes.dart';
 
 class AuthMiddleware extends GetMiddleware {
   final AuthController _authController = Get.find();
-  final NavCtrl _navCtrl = Get.find();
 
   @override
   RouteSettings? redirect(String? route) {
-    String returnUrl = Uri.encodeFull(route ?? '');
-    print(returnUrl);
+    String returnUrl = Uri.encodeFull(route ?? Routes.home);
     return _authController.user != null
         ? null
         : _authController.isReady.value
-            ? RouteSettings(name: '${Routes.login}?return=' + returnUrl)
+            ? RouteSettings(name: Routes.login, arguments: returnUrl)
             : const RouteSettings(name: Routes.home);
   }
 }
