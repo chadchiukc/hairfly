@@ -95,6 +95,7 @@ class MyTranslations extends Translations {
           'bookingServices': 'Services: ',
           'bookingTime': 'Time: ',
           'createBy': 'Create Time: ',
+          'noBooking': 'No Booking Yet\nPlease Try Our Services.',
           'joinUsTitle': 'This App Is Still Developing',
           'joinUsMiddleText': 'Please Wait Until It Is Well-Developed',
         },
@@ -189,6 +190,7 @@ class MyTranslations extends Translations {
           'bookingServices': '預約服務: ',
           'bookingTime': '預約時間: ',
           'createBy': '創立於: ',
+          'noBooking': '暫未有預約\n請嘗試我們的服務',
           'joinUsTitle': '此APP仍在開發中',
           'joinUsMiddleText': '請耐心等候直至開發完成',
         }

@@ -397,7 +397,7 @@ class BookingPage extends StatelessWidget {
                                                                                     EasyLoading.show(status: 'loading'.tr);
                                                                                     if (_bookingCtrl.confirmBooking()) {
                                                                                       if (await Database().addBooking(_bookingCtrl.selectedService, _shopCtrl.selectedShop.value!.id!, _bookingCtrl.selectedDateTime, _authController.user!, _bookingCtrl.displayValue.value)) {
-                                                                                        Get.back();
+                                                                                        Get.offAllNamed(Routes.status);
                                                                                         Get.snackbar(
                                                                                           'successBooking'.tr,
                                                                                           'checkStatus'.tr,

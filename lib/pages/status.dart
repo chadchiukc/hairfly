@@ -37,16 +37,46 @@ class StatusPage extends StatelessWidget {
                                   height: Get.height * 0.4,
                                   child: const Center(
                                       child: CircularProgressIndicator()))
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 50),
-                                    StatusCard(
-                                      statusWording: _statusCtrl.statusWording,
-                                      status: _statusCtrl.bookingList[0],
+                              : _statusCtrl.bookingList.isEmpty
+                                  ? SizedBox(
+                                      height: Get.height * 0.6,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'noBooking'.tr,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const Icon(
+                                            Icons.cancel_presentation,
+                                            size: 200,
+                                            color: Colors.grey,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 50),
+                                        // StatusCard(
+                                        //   statusWording:
+                                        //       _statusCtrl.statusWording,
+                                        //   status: _statusCtrl.bookingList[0],
+                                        // ),
+                                        ..._statusCtrl.bookingList
+                                            .map((element) => StatusCard(
+                                                statusWording:
+                                                    _statusCtrl.statusWording,
+                                                status: element))
+                                            .toList()
+                                      ],
                                     ),
-                                  ],
-                                ),
                         )),
                     childCount: 1))
           ],

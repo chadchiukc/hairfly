@@ -31,12 +31,21 @@ class NotExistPage extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                     ((context, index) => SizedBox(
                         height: Get.height * 0.7,
-                        child: Center(
-                            child: Text(
-                          'notExtist'.tr,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
-                        )))),
+                        child: Column(
+                          children: [
+                            Text(
+                              'notExtist'.tr,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 30),
+                            ),
+                            const Icon(
+                              Icons.cancel_presentation,
+                              size: 200,
+                              color: Colors.grey,
+                            )
+                          ],
+                        ))),
                     childCount: 1))
           ],
         ),
